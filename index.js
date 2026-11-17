@@ -4,10 +4,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   res.redirect("/index.html");
@@ -24,7 +24,7 @@ app.post('/api/chat', async (req, res) => {
         }
         
         const response = await fetch(
-            "https://openrouter.ai/v1/chat/completions",
+            "https://openrouter.ai/api/v1/chat/completions",
             {
                 method: "POST",
 
@@ -112,6 +112,10 @@ app.post('/api/chat', async (req, res) => {
         
 });
 
-app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server berjalan di http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
